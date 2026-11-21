@@ -1,10 +1,6 @@
 from machine import Pin, time_pulse_us
 from utime import sleep_us
 
-__version__ = '0.2.1'
-__author__ = 'Roberto Sánchez'
-__license__ = "Apache License 2.0. https://www.apache.org/licenses/LICENSE-2.0"
-
 class HCSR04:
     """
     Driver to use the untrasonic sensor HC-SR04.
@@ -53,7 +49,7 @@ class HCSR04:
                 raise OSError('Out of range')
             raise ex
 
-    def distance_mm(self):
+    def read_mm(self):
         """
         Get the distance in milimeters without floating point operations.
         """
@@ -64,10 +60,10 @@ class HCSR04:
         # the sound speed on air (343.2 m/s), that It's equivalent to
         # 0.34320 mm/us that is 1mm each 2.91us
         # pulse_time // 2 // 2.91 -> pulse_time // 5.82 -> pulse_time * 100 // 582 
-        mm = pulse_time * 100 // 582
+        mm = round(pulse_time * 0.17)
         return mm
 
-    def distance_cm(self):
+    def read(self):
         """
         Get the distance in centimeters with floating point operations.
         It returns a float
@@ -78,5 +74,5 @@ class HCSR04:
         # (the pulse walk the distance twice) and by 29.1 becasue
         # the sound speed on air (343.2 m/s), that It's equivalent to
         # 0.034320 cm/us that is 1cm each 29.1us
-        cms = (pulse_time / 2) / 29.1
-        return cms
+        cm = round((pulse_time * 0.034005) * 0.5, 2)
+        return cm
